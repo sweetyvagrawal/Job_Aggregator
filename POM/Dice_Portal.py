@@ -1,4 +1,6 @@
 import logging
+import time
+
 from selenium.webdriver import ActionChains
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -37,10 +39,23 @@ class Dice(JobPortal):
         return self.get_elements(self.JOB_LIST_LOCATOR)
 
     def get_job_details(self, job: webelement):
-        job_link_ele = job.find_element_by_xpath("div/a")
+        self.open_job(job)
+        time.sleep(1)
+        self.close_job()
 
-        job_link = job_link_ele.get_attribute("href")
-        self.driver.execute_script("window.open('" + job_link + "');")
-        print(job_link)
+    def close_job(self):
+        logging.info("closing new window")
+        self.driver.close()
+        self.driver.switch_to_window(self.driver.window_handles[0])
+
+    def open_job(self, job):
+        logging.info("opening job in new tab")
+        job.find_element_by_xpath("div/h5/a").send_keys(Keys.CONTROL, Keys.RETURN)
+        self.driver.switch_to_window(self.driver.window_handles[1])
+
+
+
+
+
 
 
