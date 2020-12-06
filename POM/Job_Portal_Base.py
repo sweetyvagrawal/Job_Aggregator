@@ -50,7 +50,7 @@ def get_job_email_address(job_desc):
 
 class JobPortal:
     driver: webdriver = None
-    wait = WebDriverWait(driver, 5)
+    wait: WebDriverWait = None
     current_job = None
 
     job_details = {'Job Category': '', 'Date&Time': '', 'Searched Job Title': '', 'Searched Job Location': '',

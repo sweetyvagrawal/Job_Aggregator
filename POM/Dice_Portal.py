@@ -4,6 +4,8 @@ from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.wait import WebDriverWait
+
 from POM.Job_Portal_Base import JobPortal
 
 
@@ -16,6 +18,7 @@ class Dice(JobPortal):
     def __init__(self, driver: webdriver):
         logging.info("creating dice class")
         self.driver = driver
+        self.wait = WebDriverWait(driver, 5)
         logging.info("dice site opening")
         self.driver.get("https://www.dice.com/")
         self.action_chain = ActionChains(driver)

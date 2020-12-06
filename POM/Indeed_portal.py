@@ -2,6 +2,8 @@ import logging
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
+from selenium.webdriver.support.wait import WebDriverWait
+
 from POM.Job_Portal_Base import JobPortal
 
 
@@ -14,6 +16,7 @@ class Indeed(JobPortal):
     def __init__(self, driver: webdriver):
         logging.info("creating Indeed class")
         self.driver = driver
+        self.wait = WebDriverWait(driver, 5)
         logging.info("Indeed site opening")
         self.driver.get("https://www.indeed.com/")
 
