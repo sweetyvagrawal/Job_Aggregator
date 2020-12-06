@@ -1,12 +1,9 @@
 import logging
-import re
 import time
-from datetime import datetime
-from selenium.webdriver import ActionChains
 from selenium import webdriver
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote import webelement
 from POM.Job_Portal_Base import JobPortal
 
 

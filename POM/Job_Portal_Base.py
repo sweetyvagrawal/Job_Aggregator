@@ -1,9 +1,47 @@
 import logging
+import re
 from abc import abstractmethod
 from datetime import datetime
 
 from selenium import webdriver
 from selenium.webdriver.remote import webelement
+
+
+def get_contact_details(job_desc):
+    logging.info("getting job company url")
+    job_phone_no_list = []
+    try:
+        # Get phone and store
+        phone_no_match = re.findall(r'[0-9]{3}-[0-9]{3}-[0-9]{4}|[+][1]\s[0-9]{3}\s[0-9]{3}\s[0-9]{4}|'
+                                    r'[(][0-9]{3}[)]\s[0-9]{3}-[0-9]{4}', job_desc)
+        # phoneNo_match = re.findall(r'[0-9]{3}-[0-9]{3}-[0-9]{4}', job_desc)
+        for phoneNo in phone_no_match:
+            if phoneNo not in job_phone_no_list:
+                job_phone_no_list.append(phoneNo)
+    except Exception as e:
+        logging.error("Exception in getting job phone no.", e)
+
+    return ", ".join(job_phone_no_list)
+
+
+def get_job_email_address(job_desc):
+    logging.info("getting job company url")
+    email_list = []
+    try:
+        # print(job_desc)
+        email_match = re.findall(r'[\w\.-]+@[\w\.-]+', job_desc)
+        for email in email_match:
+            # if not ("accommodation" in email or "disabilit" in email or "employeeservice" in email ):
+            if not (
+                    re.search('accommodation', email, re.IGNORECASE) or
+                    re.search('disabilit', email, re.IGNORECASE) or
+                    re.search('employeeservice', email, re.IGNORECASE) or email in email_list
+            ):
+                email_list.append(email)
+    except:
+        logging.error("Exception in getting email address", exc_info=True)
+
+    return ', '.join(email_list)
 
 
 class JobPortal:
@@ -12,6 +50,7 @@ class JobPortal:
                    'Job Portal': '', 'Job Date Posted': '', 'Job Title': '',
                    'Job Company Name': '', 'Job Location': '', 'Job Phone No': '', 'Job Email': '', 'Job Link': '',
                    'Job Description': ''}
+    current_job = None
 
     @abstractmethod
     def get_job_title_input_box(self) -> webelement:
@@ -69,41 +108,6 @@ class JobPortal:
     def get_job_url(self):
         pass
 
-    def get_job_email_address(self, job_desc):
-        logging.info("getting job company url")
-        email_list = []
-        try:
-            # print(job_desc)
-            email_match = re.findall(r'[\w\.-]+@[\w\.-]+', job_desc)
-            for email in email_match:
-                # if not ("accommodation" in email or "disabilit" in email or "employeeservice" in email ):
-                if not (
-                        re.search('accommodation', email, re.IGNORECASE) or
-                        re.search('disabilit', email, re.IGNORECASE) or
-                        re.search('employeeservice', email, re.IGNORECASE) or email_list.index(email) >= 0
-                        ):
-                    email_list.append(email)
-        except:
-            logging.error("Exception in getting email address", exc_info=True)
-
-        return ', '.join(email_list)
-
-    def get_contact_details(self, job_desc):
-        logging.info("getting job company url")
-        job_phoneNo_list = []
-        try:
-            # Get phone and store
-            phoneNo_match = re.findall(r'[0-9]{3}-[0-9]{3}-[0-9]{4}|[+][1]\s[0-9]{3}\s[0-9]{3}\s[0-9]{4}|'
-                                       r'[(][0-9]{3}[)]\s[0-9]{3}-[0-9]{4}', job_desc)
-            # phoneNo_match = re.findall(r'[0-9]{3}-[0-9]{3}-[0-9]{4}', job_desc)
-            for phoneNo in phoneNo_match:
-                if phoneNo not in job_phoneNo_list:
-                    job_phoneNo_list.append(phoneNo)
-        except Exception as e:
-            logging.error("Exception in getting job phone no.", e)
-
-        return ", ".join(job_phoneNo_list)
-
     def get_element(self, locator: ()) -> webelement:
         try:
             logging.info("searching for webelement with \"" + locator[1] + "\"")
@@ -145,24 +149,18 @@ class JobPortal:
             raise
 
     def get_job_details(self, job: webelement):
+        self.current_job = job
         self.open_job(job)
         self.job_details["Job Title"] = self.get_job_title()
         self.job_details["Job Company Name"] = self.get_job_company_name()
         self.job_details["Job Location"] = self.get_job_posting_location()
         self.job_details["Job Date Posted"] = self.get_job_posted_date()
         self.job_details["Job Description"] = self.get_job_description()
-        self.job_details["Job Email"] = self.get_job_email_address(self.job_details["Job Description"])
-        self.job_details["Job Phone No"] = self.get_contact_details(self.job_details["Job Description"])
+        self.job_details["Job Email"] = get_job_email_address(self.job_details["Job Description"])
+        self.job_details["Job Phone No"] = get_contact_details(self.job_details["Job Description"])
         self.job_details["Date&Time"] = datetime.now().strftime("%b-%d-%Y %H:%M:%S")
         self.job_details["Job Link"] = self.get_job_url()
         self.job_details["Job Portal"] = "Dice"
 
         self.close_job()
         return self.job_details
-
-
-
-
-
-
-

@@ -1,4 +1,5 @@
 import logging
+import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -12,7 +13,7 @@ class Monster (JobPortal):
     SEARCH_BUTTON_LOCATOR = (By.ID, "doQuickSearch2")
     LOCATION_INPUT_BOX_LOCATOR = (By.ID, "where2")
     TITLE_INPUT_BOX_LOCATOR = (By.ID, 'q2')
-    JOB_LIST_LOCATOR = (By.CSS_SELECTOR, "div[class='summary']")
+    JOB_LIST_LOCATOR = (By.CSS_SELECTOR, "div[class='flex-row']")
     FILTER_BUTTON_LOCATOR = (By.CSS_SELECTOR, "button[id='filter-flyout']")
 
     def __init__(self, driver: webdriver):
@@ -39,6 +40,7 @@ class Monster (JobPortal):
             try:
                 load_more_jobs = self.get_element((By.ID, "loadMoreJobs"))
                 load_more_jobs.click()
+                time.sleep(2)
             except:
                 break
         return self.get_elements(self.JOB_LIST_LOCATOR)
@@ -53,42 +55,42 @@ class Monster (JobPortal):
     def get_job_title(self):
         try:
             logging.info("getting job title")
-            return self.get_element((By.CSS_SELECTOR, "h1[class='title']"))
+            return self.get_element((By.CSS_SELECTOR, "h1[class='title']")).text
         except:
             return ""
 
     def get_job_company_name(self):
         try:
             logging.info("getting job company information")
-            self.get_element((By.XPATH, "//li[@role='presentation']/a[text() ='Company']")).click()
-            return self.get_element((By.CSS_SELECTOR, "[id='AboutCompany'']>header>h2")).text
+            return self.get_child_element(self.current_job, (By.CSS_SELECTOR, "div[class='company']>span")).text
+
         except:
             return ""
 
     def get_job_posting_location(self):
         try:
             logging.info("getting job location")
-            return self.get_element((By.CSS_SELECTOR, "h2[class='subtitle']"))
+            return self.get_child_element(self.current_job, (By.CSS_SELECTOR, "div[class='location']>span")).text
         except:
             return ""
 
     def get_job_posted_date(self):
         try:
             logging.info("getting job posted date")
-            return self.get_element((By.XPATH, "//div/time")).text
+            return self.get_child_element(self.current_job, (By.CSS_SELECTOR, "div[class='meta flex-col']>time")).text
         except:
             return ""
 
     def get_job_description(self):
         try:
             logging.info("getting job description")
-            return self.get_element((By.ID, "JobDescription"))
+            return self.get_element((By.ID, "JobDescription")).text
         except:
             return ""
 
     def open_job(self, job):
         logging.info("opening single job ")
-        self.get_element((By.CSS_SELECTOR, "div[class='summary'] header")).click()
+        self.get_child_element(job, (By.CSS_SELECTOR, "div[class='summary'] header")).click()
 
     def close_job(self):
         return
