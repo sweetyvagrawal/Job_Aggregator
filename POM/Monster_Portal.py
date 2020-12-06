@@ -2,6 +2,8 @@ import logging
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote import webelement
+from selenium.webdriver.support.select import Select
 
 from POM.Job_Portal_Base import JobPortal
 
@@ -10,7 +12,8 @@ class Monster (JobPortal):
     SEARCH_BUTTON_LOCATOR = (By.ID, "doQuickSearch2")
     LOCATION_INPUT_BOX_LOCATOR = (By.ID, "where2")
     TITLE_INPUT_BOX_LOCATOR = (By.ID, 'q2')
-    JOB_LIST_LOCATOR = (By.XPATH, "//div[contains(@class,'title-container')]")
+    JOB_LIST_LOCATOR = (By.CSS_SELECTOR, "div[class='summary']")
+    FILTER_BUTTON_LOCATOR = (By.CSS_SELECTOR, "button[id='filter-flyout']")
 
     def __init__(self, driver: webdriver):
         logging.info("creating monster class")
@@ -32,6 +35,75 @@ class Monster (JobPortal):
 
     def get_job_list(self):
         logging.info("getting monster job list")
-        pass
+        while True:
+            try:
+                load_more_jobs = self.get_element((By.ID, "loadMoreJobs"))
+                load_more_jobs.click()
+            except:
+                break
+        return self.get_elements(self.JOB_LIST_LOCATOR)
+
+    def apply_job_filters(self) -> webelement:
+        logging.info("get all the jobs posted today")
+        self.get_element(self.FILTER_BUTTON_LOCATOR).click()
+        select = Select(self.get_element((By.ID, "FilterPosted")))
+        select.select_by_visible_text("Today")
+        self.get_element((By.ID, 'use-filter-btn')).click()
+
+    def get_job_title(self):
+        try:
+            logging.info("getting job title")
+            return self.get_element((By.CSS_SELECTOR, "h1[class='title']"))
+        except:
+            return ""
+
+    def get_job_company_name(self):
+        try:
+            logging.info("getting job company information")
+            self.get_element((By.XPATH, "//li[@role='presentation']/a[text() ='Company']")).click()
+            return self.get_element((By.CSS_SELECTOR, "[id='AboutCompany'']>header>h2")).text
+        except:
+            return ""
+
+    def get_job_posting_location(self):
+        try:
+            logging.info("getting job location")
+            return self.get_element((By.CSS_SELECTOR, "h2[class='subtitle']"))
+        except:
+            return ""
+
+    def get_job_posted_date(self):
+        try:
+            logging.info("getting job posted date")
+            return self.get_element((By.XPATH, "//div/time")).text
+        except:
+            return ""
+
+    def get_job_description(self):
+        try:
+            logging.info("getting job description")
+            return self.get_element((By.ID, "JobDescription"))
+        except:
+            return ""
+
+    def open_job(self, job):
+        logging.info("opening single job ")
+        self.get_element((By.CSS_SELECTOR, "div[class='summary'] header")).click()
+
+    def close_job(self):
+        return
+
+    def get_job_url(self):
+        try:
+            logging.info("getting current job url")
+            return self.driver.current_url
+        except:
+            return ""
+
+    def get_jobs_next_page(self):
+        return []
+
+
+
 
 
