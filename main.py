@@ -20,7 +20,7 @@ logging.basicConfig(filename="scrapper-" + datetime.datetime.now().strftime("%m-
                             datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
 
 if len(sys.argv) < 2:
-    print("please provide 2 arg. for eg: main.py Dice|Indeed|monster")
+    print("please provide 2 arg. for eg: main.py and portal name like Dice|Indeed|monster")
     sys.exit()
 
 
@@ -71,11 +71,6 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
 
     for job_title in job_titles:
         for job_location in job_locations:
-
-            logging.basicConfig(filename="scrapper-" + datetime.datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".log",
-                                format='%(asctime)s %(name)s - %(levelname)s - %(funcName)s- %(message)s',
-                                datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
-
             logging.info("trying to create Driver")
             driver = Utilities.get_driver()
 
@@ -109,16 +104,17 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
                             job_details = job_portal.get_job_details(job)
                             job_details["Searched Job Title"] = job_title
                             job_details["Searched Job Location"] = job_location
+                            job_details["Job Portal"] = portal
                             jobs_writer.writerow(job_details)
                             logging.info("got job details")
-                        except:
+                        except Exception as e:
                             logging.exception("failed to get job details for job: " + job.text)
 
                     job_list = job_portal.get_jobs_next_page()
 
                 logging.info("completed scrapping jobs for job title:" + job_title + " and job location:" + job_location)
 
-            except:
+            except Exception as e:
                 logging.exception("error occured during performing job search for job title:" + job_title + " and job location:" + job_location)
 
             finally:
