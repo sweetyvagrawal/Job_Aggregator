@@ -5,6 +5,10 @@ from datetime import datetime
 
 from selenium import webdriver
 from selenium.webdriver.remote import webelement
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
+
+
 
 
 def get_contact_details(job_desc):
@@ -46,11 +50,13 @@ def get_job_email_address(job_desc):
 
 class JobPortal:
     driver: webdriver = None
+    wait = WebDriverWait(driver, 5)
+    current_job = None
+
     job_details = {'Job Category': '', 'Date&Time': '', 'Searched Job Title': '', 'Searched Job Location': '',
                    'Job Portal': '', 'Job Date Posted': '', 'Job Title': '',
                    'Job Company Name': '', 'Job Location': '', 'Job Phone No': '', 'Job Email': '', 'Job Link': '',
                    'Job Description': ''}
-    current_job = None
 
     @abstractmethod
     def get_job_title_input_box(self) -> webelement:
@@ -111,7 +117,8 @@ class JobPortal:
     def get_element(self, locator: ()) -> webelement:
         try:
             logging.info("searching for webelement with \"" + locator[1] + "\"")
-            return self.driver.find_element(locator[0], locator[1])
+            return self.wait.until(EC.presence_of_element_located(locator))
+            #return self.driver.find_element(locator[0], locator[1])
         except:
             filename = "Screenshot\error-" + datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".png"
             logging.exception("failed to get webelement \"" + locator[1] + "\" .screenshot captured at " + filename)
@@ -121,7 +128,7 @@ class JobPortal:
     def get_elements(self, locator: ()) -> list:
         try:
             logging.info("searching for webelements with \"" + locator[1] + "\"")
-            return self.driver.find_elements(locator[0], locator[1])
+            return self.wait.until(EC.presence_of_all_elements_located(locator))
         except:
             filename = "Screenshot\error-" + datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".png"
             logging.exception("failed to get webelements \"" + locator[1] + "\" .screenshot captured at " + filename)
