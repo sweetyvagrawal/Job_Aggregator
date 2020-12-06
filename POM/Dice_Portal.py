@@ -10,7 +10,7 @@ from POM.Job_Portal_Base import JobPortal
 class Dice(JobPortal):
     SEARCH_BUTTON_LOCATOR = (By.ID, "submitSearch-button")
     LOCATION_INPUT_BOX_LOCATOR = (By.ID, "google-location-search")
-    TITLE_INPUT_BOX_LOCATOR = (By.CSS_SELECTOR, "1div [data-cy='typeahead-input']")
+    TITLE_INPUT_BOX_LOCATOR = (By.CSS_SELECTOR, "div [data-cy='typeahead-input']")
     JOB_LIST_LOCATOR = (By.XPATH, "//div[contains(@class,'title-container')]/div/h5/a")
 
     def __init__(self, driver: webdriver):
