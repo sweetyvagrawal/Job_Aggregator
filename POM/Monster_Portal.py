@@ -11,6 +11,8 @@ from POM.Job_Portal_Base import JobPortal
 
 
 class Monster (JobPortal):
+
+
     SEARCH_BUTTON_LOCATOR = (By.ID, "doQuickSearch2")
     LOCATION_INPUT_BOX_LOCATOR = (By.ID, "where2")
     TITLE_INPUT_BOX_LOCATOR = (By.ID, 'q2')
@@ -40,9 +42,9 @@ class Monster (JobPortal):
         logging.info("getting monster job list")
         while True:
             try:
-                load_more_jobs = self.get_element((By.ID, "loadMoreJobs"))
+                load_more_jobs = self.driver.find_element(By.ID, "loadMoreJobs")
                 load_more_jobs.click()
-                time.sleep(2)
+                time.sleep(1)
             except:
                 break
         return self.get_elements(self.JOB_LIST_LOCATOR)
@@ -82,6 +84,15 @@ class Monster (JobPortal):
             return self.get_child_element(self.current_job, (By.CSS_SELECTOR, "div[class='meta flex-col']>time")).text
         except:
             return ""
+
+    def is_job_found(self):
+        try:
+            logging.info("relevant jobs as per job search not found")
+            self.driver.find_element(By.CSS_SELECTOR, "h1[class='pivot block']")
+            return False
+        except:
+            logging.info("relevant jobs as per job search found")
+            return True
 
     def get_job_description(self):
         try:

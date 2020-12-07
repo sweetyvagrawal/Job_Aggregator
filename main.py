@@ -68,6 +68,9 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
     jobs_writer = csv.DictWriter(jobs, fieldnames=fieldnames, delimiter=',', quotechar='"',
                                  quoting=csv.QUOTE_MINIMAL)
     jobs_writer.writeheader()
+    # job_title = ""
+    # job_location = ""
+
 
     for job_title in job_titles:
         for job_location in job_locations:
@@ -88,7 +91,9 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
                 job_location_input_box.send_keys(job_location)
                 job_portal.get_job_search_button().click()
                 job_portal.apply_job_filters()
-
+                time.sleep(2)
+                if not job_portal.is_job_found():
+                    break
                 logging.info("getting all jobs link in variable")
 
                 job_list = job_portal.get_job_list()
@@ -108,14 +113,14 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
                             jobs_writer.writerow(job_details)
                             logging.info("got job details")
                         except Exception as e:
-                            logging.exception("failed to get job details for job: " + job.text)
+                            logging.error("failed to get job details for job: " + job.text, e)
 
                     job_list = job_portal.get_jobs_next_page()
 
                 logging.info("completed scrapping jobs for job title:" + job_title + " and job location:" + job_location)
 
             except Exception as e:
-                logging.exception("error occured during performing job search for job title:" + job_title + " and job location:" + job_location)
+                logging.error("error occured during performing job search for job title:" + job_title + " and job location:" + job_location, e)
 
             finally:
                 time.sleep(1)

@@ -10,6 +10,8 @@ from POM.Job_Portal_Base import JobPortal
 
 
 class Dice(JobPortal):
+
+
     SEARCH_BUTTON_LOCATOR = (By.ID, "submitSearch-button")
     LOCATION_INPUT_BOX_LOCATOR = (By.ID, "google-location-search")
     TITLE_INPUT_BOX_LOCATOR = (By.CSS_SELECTOR, "div [data-cy='typeahead-input']")
@@ -37,7 +39,7 @@ class Dice(JobPortal):
 
     def get_job_list(self):
         logging.info("creating list of dice search job title")
-        time.sleep(2)
+        time.sleep(1)
         return self.get_elements(self.JOB_LIST_LOCATOR)
 
     def close_job(self):
@@ -45,13 +47,16 @@ class Dice(JobPortal):
         self.driver.close()
         self.driver.switch_to_window(self.driver.window_handles[0])
 
+    def is_job_found(self):
+        return True
+
     def open_job(self, job):
         try:
             logging.info("opening job in new tab")
-            job.send_keys(Keys.CONTROL, Keys.RETURN)
             #time.sleep(2)
             for i in range(0, 3):
                 try:
+                    job.send_keys(Keys.CONTROL, Keys.RETURN)
                     self.driver.switch_to_window(self.driver.window_handles[1])
                     break
                 except:
@@ -64,6 +69,7 @@ class Dice(JobPortal):
             #     self.driver.switch_to_window(self.driver.window_handles[1])
             # except:
             logging.error("failed to switch to window", e)
+            raise
 
     def get_job_title(self):
         try:

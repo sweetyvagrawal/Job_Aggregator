@@ -99,6 +99,10 @@ class JobPortal:
         pass
 
     @abstractmethod
+    def is_job_found(self):
+        pass
+
+    @abstractmethod
     def get_job_description(self):
         pass
 
@@ -119,9 +123,9 @@ class JobPortal:
             logging.info("searching for webelement with \"" + locator[1] + "\"")
             return self.wait.until(EC.presence_of_element_located(locator))
             #return self.driver.find_element(locator[0], locator[1])
-        except:
+        except Exception as e:
             filename = "Screenshot\error-" + datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".png"
-            logging.exception("failed to get webelement \"" + locator[1] + "\" .screenshot captured at " + filename)
+            logging.error("failed to get webelement \"" + locator[1] + "\" .screenshot captured at " + filename, e)
             self.driver.get_screenshot_as_file(filename)
             raise
 
@@ -129,9 +133,9 @@ class JobPortal:
         try:
             logging.info("searching for webelements with \"" + locator[1] + "\"")
             return self.wait.until(EC.presence_of_all_elements_located(locator))
-        except:
+        except Exception as e:
             filename = "Screenshot\error-" + datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".png"
-            logging.exception("failed to get webelements \"" + locator[1] + "\" .screenshot captured at " + filename)
+            logging.error("failed to get webelements \"" + locator[1] + "\" .screenshot captured at " + filename, e)
             self.driver.get_screenshot_as_file(filename)
             raise
 
@@ -139,9 +143,9 @@ class JobPortal:
         try:
             logging.info("searching for webelement with \"" + locator[1] + "\"")
             return element.find_element(locator[0], locator[1])
-        except:
+        except Exception as e:
             filename = "Screenshot\error-" + datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".png"
-            logging.exception("failed to get webelement \"" + locator[1] + "\" .screenshot captured at " + filename)
+            logging.error("failed to get webelement \"" + locator[1] + "\" .screenshot captured at " + filename, e)
             self.driver.get_screenshot_as_file(filename)
             raise
 
@@ -149,9 +153,9 @@ class JobPortal:
         try:
             logging.info("searching for webelements with \"" + locator[1] + "\"")
             return element.find_elements(locator[0], locator[1])
-        except:
+        except Exception as e:
             filename = "Screenshot\error-" + datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".png"
-            logging.exception("failed to get webelements \"" + locator[1] + "\" .screenshot captured at " + filename)
+            logging.error("failed to get webelements \"" + locator[1] + "\" .screenshot captured at " + filename, e)
             self.driver.get_screenshot_as_file(filename)
             raise
 
