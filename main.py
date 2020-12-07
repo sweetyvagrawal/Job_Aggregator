@@ -1,8 +1,9 @@
 import csv
-import datetime
+
 import logging
 import sys
 import time
+from datetime import datetime
 
 import psycopg2
 from pandas import np
@@ -15,7 +16,7 @@ from POM.Indeed_portal import Indeed
 from POM.Job_Portal_Base import JobPortal
 from POM.Monster_Portal import Monster
 
-logging.basicConfig(filename="scrapper-" + datetime.datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".log",
+logging.basicConfig(filename="scrapper-" + datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".log",
                             format='%(asctime)s %(name)s - %(levelname)s - %(funcName)s- %(message)s',
                             datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
 
@@ -113,14 +114,17 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
                             jobs_writer.writerow(job_details)
                             logging.info("got job details")
                         except Exception as e:
-                            logging.error("failed to get job details for job: " + job.text, e)
+                            logging.exception("failed to get job details for job: " + job.text)
 
                     job_list = job_portal.get_jobs_next_page()
 
                 logging.info("completed scrapping jobs for job title:" + job_title + " and job location:" + job_location)
 
             except Exception as e:
-                logging.error("error occured during performing job search for job title:" + job_title + " and job location:" + job_location, e)
+                filename = "Screenshot\error-" + datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".png"
+                logging.exception(
+                    "error occured during performing job search for job title:" + job_title + " and job location:" + job_location + " .screenshot captured at " + filename)
+                driver.get_screenshot_as_file(filename)
 
             finally:
                 time.sleep(1)

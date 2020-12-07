@@ -1,8 +1,7 @@
 import logging
 import sys
-
 from selenium import webdriver
-from selenium.webdriver import ActionChains
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 def get_driver() -> webdriver:
@@ -11,7 +10,8 @@ def get_driver() -> webdriver:
         options = webdriver.ChromeOptions()
         options.add_argument('--ignore-certificates-errors')
         options.add_argument("--test-type")
-        driver = webdriver.Chrome(executable_path="c:\\chromedriver.exe", options=options)
+        #driver = webdriver.Chrome(executable_path="c:\\chromedriver.exe", options=options)
+        driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
         driver.maximize_window()
         driver.implicitly_wait(10)
         logging.info("driver created successfully")

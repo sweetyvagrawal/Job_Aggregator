@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from POM.Job_Portal_Base import JobPortal
@@ -53,10 +54,12 @@ class Dice(JobPortal):
     def open_job(self, job):
         try:
             logging.info("opening job in new tab")
-            #time.sleep(2)
+
             for i in range(0, 3):
                 try:
+                    windows_handles = self.driver.window_handles
                     job.send_keys(Keys.CONTROL, Keys.RETURN)
+                    self.wait.until(expected_conditions.new_window_is_opened(windows_handles))
                     self.driver.switch_to_window(self.driver.window_handles[1])
                     break
                 except:
@@ -68,7 +71,7 @@ class Dice(JobPortal):
             #     time.sleep(2)
             #     self.driver.switch_to_window(self.driver.window_handles[1])
             # except:
-            logging.error("failed to switch to window", e)
+            logging.exception("failed to switch to window")
             raise
 
     def get_job_title(self):
@@ -111,7 +114,7 @@ class Dice(JobPortal):
             logging.info("getting job company url")
             return self.driver.current_url
         except Exception as e:
-            logging.error(" error in fetching job url", e)
+            logging.exception(" error in fetching job url")
             return ""
 
     def apply_job_filters(self):
