@@ -12,7 +12,6 @@ from POM.Job_Portal_Base import JobPortal
 
 
 class Indeed(JobPortal):
-    SEARCH_BUTTON_LOCATOR = (By.XPATH, "//button[contains(@class, 'icl-WhatWhere-button')]")
     LOCATION_INPUT_BOX_LOCATOR = (By.ID, "text-input-where")
     TITLE_INPUT_BOX_LOCATOR = (By.ID, "text-input-what")
     JOB_LIST_LOCATOR = (By.CSS_SELECTOR, "[class='jobsearch-SerpJobCard unifiedRow row result clickcard']")
@@ -23,10 +22,6 @@ class Indeed(JobPortal):
         self.wait = WebDriverWait(driver, 10)
         logging.info("Indeed site opening")
         self.driver.get("https://www.indeed.com/")
-
-    def get_job_search_button(self):
-        logging.info("getting indeed search button")
-        return self.get_element(self.SEARCH_BUTTON_LOCATOR)
 
     def get_job_location_input_box(self):
         logging.info("getting indeed job location box ")
@@ -124,8 +119,6 @@ class Indeed(JobPortal):
     def close_job(self):
         self.driver.switch_to.default_content()
 
-    def get_job_url(self):
-        logging.info("getting current job url")
-        return self.driver.current_url
+
 
 

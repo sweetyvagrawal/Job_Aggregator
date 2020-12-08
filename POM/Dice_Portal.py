@@ -102,14 +102,6 @@ class Dice(JobPortal):
         except:
             return ""
 
-    def get_job_url(self):
-        try:
-            logging.info("getting job company url")
-            return self.driver.current_url
-        except Exception as e:
-            logging.exception(" error in fetching job url")
-            return ""
-
     def apply_job_filters(self):
         logging.info("get all the jobs posted today")
         self.get_element((By.XPATH, "//button[text()=' Today ']")).click()

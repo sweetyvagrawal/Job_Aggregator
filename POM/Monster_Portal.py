@@ -13,9 +13,6 @@ from POM.Job_Portal_Base import JobPortal
 
 
 class Monster (JobPortal):
-
-
-    SEARCH_BUTTON_LOCATOR = (By.ID, "doQuickSearch2")
     LOCATION_INPUT_BOX_LOCATOR = (By.ID, "where2")
     TITLE_INPUT_BOX_LOCATOR = (By.ID, 'q2')
     JOB_LIST_LOCATOR = (By.CSS_SELECTOR, "div[class='flex-row']")
@@ -27,10 +24,6 @@ class Monster (JobPortal):
         self.wait = WebDriverWait(driver, 10)
         logging.info("Monster site opening")
         self.driver.get("https://www.monster.com//")
-
-    def get_job_search_button(self):
-        logging.info("getting monster search button")
-        return self.get_element(self.SEARCH_BUTTON_LOCATOR)
 
     def get_job_location_input_box(self):
         logging.info("getting monster job location box ")
@@ -122,12 +115,7 @@ class Monster (JobPortal):
     def close_job(self):
         return
 
-    def get_job_url(self):
-        try:
-            logging.info("getting current job url")
-            return self.driver.current_url
-        except:
-            return ""
+
 
     def get_jobs_next_page(self):
         return []

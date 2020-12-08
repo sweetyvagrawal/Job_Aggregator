@@ -67,10 +67,6 @@ class JobPortal:
         pass
 
     @abstractmethod
-    def get_job_search_button(self) -> webelement:
-        pass
-
-    @abstractmethod
     def apply_job_filters(self) -> webelement:
         pass
 
@@ -118,9 +114,13 @@ class JobPortal:
     def close_job(self):
         pass
 
-    @abstractmethod
     def get_job_url(self):
-        pass
+        try:
+            logging.info("getting job company url")
+            return self.driver.current_url
+        except Exception as e:
+            logging.exception(" error in fetching job url")
+            return
 
     def get_element(self, locator: ()) -> webelement:
         try:
@@ -175,7 +175,5 @@ class JobPortal:
         self.job_details["Job Phone No"] = get_contact_details(self.job_details["Job Description"])
         self.job_details["Date&Time"] = datetime.now().strftime("%b-%d-%Y %H:%M:%S")
         self.job_details["Job Link"] = self.get_job_url()
-
-
         self.close_job()
         return self.job_details
