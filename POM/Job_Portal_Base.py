@@ -107,6 +107,10 @@ class JobPortal:
         pass
 
     @abstractmethod
+    def set_job_location_and_search(self, job_location):
+        pass
+
+    @abstractmethod
     def open_job(self, job):
         pass
 

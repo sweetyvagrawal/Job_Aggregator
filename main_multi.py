@@ -1,6 +1,7 @@
 import csv
 
 import logging
+import multiprocessing
 import sys
 import time
 from datetime import datetime
@@ -40,40 +41,16 @@ def get_job_portal(portal_name: str, driver: webdriver) -> JobPortal:
         sys.exit()
 
 
-conn = psycopg2.connect(
-    host = 'ec2-50-17-90-177.compute-1.amazonaws.com',
-    database = 'dbo53q05khphsq',
-    user = 'tjwamztwfeudyf',
-    password = '4016af97c725336d823c79afd14e790341ff2b3b6849ea1ed1f3260b2f4fb46b'
-)
-cur1 = conn.cursor()
-cur1.execute('SELECT "job_title" FROM herokudjangoapp_jobs WHERE "job_title" IS NOT NULL')
-job_titles = cur1.fetchall()
-job_titles = np.fromiter([i[0] for i in job_titles], dtype='<U50')
-
-logging.info("Job titles")
-logging.info(job_titles)
-
-cur1.execute('SELECT "job_location" FROM herokudjangoapp_jobs')
-job_locations = cur1.fetchall()
-job_locations = np.fromiter([i[0] for i in job_locations], dtype='<U50')
-logging.info("Job Locations")
-logging.info(job_locations)
-portal = sys.argv[1]
-
-with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
-    fieldnames = ['Job Category', 'Date&Time', 'Searched Job Title', 'Searched Job Location', 'Job Portal',
-                  'Job Date Posted', 'Job Title',
-                  'Job Company Name', 'Job Location', 'Job Phone No', 'Job Email', 'Job Link',
-                  'Job Description']
-    jobs_writer = csv.DictWriter(jobs, fieldnames=fieldnames, delimiter=',', quotechar='"',
-                                 quoting=csv.QUOTE_MINIMAL)
-    jobs_writer.writeheader()
-    # job_title = ""
-    # job_location = ""
-
-
-    for job_title in job_titles:
+def single_process_job(job_title: str):
+    filename = job_title.replace(" ", "").replace("/", "").replace("\\", "")
+    with open(filename + '.csv', mode='w', encoding='utf-8') as jobs:
+        fieldnames = ['Job Category', 'Date&Time', 'Searched Job Title', 'Searched Job Location', 'Job Portal',
+                      'Job Date Posted', 'Job Title',
+                      'Job Company Name', 'Job Location', 'Job Phone No', 'Job Email', 'Job Link',
+                      'Job Description']
+        jobs_writer = csv.DictWriter(jobs, fieldnames=fieldnames, delimiter=',', quotechar='"',
+                                     quoting=csv.QUOTE_MINIMAL)
+        jobs_writer.writeheader()
         for job_location in job_locations:
             logging.info("trying to create Driver")
             driver = Utilities.get_driver()
@@ -84,13 +61,14 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
 
                 job_title_input_box = job_portal.get_job_title_input_box()
                 job_title_input_box.clear()
-                logging.info("sending job title " + "\"" +job_title + "\"")
+                logging.info("sending job title " + "\"" + job_title + "\"")
                 job_title_input_box.send_keys(job_title)
                 job_portal.set_job_location_and_search(job_location)
                 job_portal.apply_job_filters()
                 time.sleep(1)
                 if not job_portal.is_job_found():
                     break
+
                 logging.info("getting all jobs link in variable")
 
                 job_list = job_portal.get_job_list()
@@ -115,7 +93,6 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
                     job_list = job_portal.get_jobs_next_page()
 
                 logging.info("completed scrapping jobs for job title:" + job_title + " and job location:" + job_location)
-
             except Exception as e:
                 filename = "Screenshot\error-" + datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".png"
                 logging.exception(
@@ -125,8 +102,34 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
             finally:
                 driver.quit()
 
-            #break
-        #break
+conn = psycopg2.connect(
+    host = 'ec2-50-17-90-177.compute-1.amazonaws.com',
+    database = 'dbo53q05khphsq',
+    user = 'tjwamztwfeudyf',
+    password = '4016af97c725336d823c79afd14e790341ff2b3b6849ea1ed1f3260b2f4fb46b'
+)
+cur1 = conn.cursor()
+cur1.execute('SELECT "job_title" FROM herokudjangoapp_jobs WHERE "job_title" IS NOT NULL')
+job_titles = cur1.fetchall()
+job_titles = np.fromiter([i[0] for i in job_titles], dtype='<U50')
+
+logging.info("Job titles")
+logging.info(job_titles)
+
+cur1.execute('SELECT "job_location" FROM herokudjangoapp_jobs')
+job_locations = cur1.fetchall()
+job_locations = np.fromiter([i[0] for i in job_locations], dtype='<U50')
+logging.info("Job Locations")
+logging.info(job_locations)
+portal = sys.argv[1]
+
+
+# job_title = ""
+# job_location = ""
+if __name__ == '__main__':
+    pool = multiprocessing.Pool(processes=5)
+    pool.map(single_process_job, job_titles)
+
 logging.info("job scrapping completed")
 
 

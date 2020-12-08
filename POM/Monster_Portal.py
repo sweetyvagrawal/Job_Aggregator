@@ -3,6 +3,7 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote import webelement
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
@@ -23,7 +24,7 @@ class Monster (JobPortal):
     def __init__(self, driver: webdriver):
         logging.info("creating monster class")
         self.driver = driver
-        self.wait = WebDriverWait(driver, 5)
+        self.wait = WebDriverWait(driver, 10)
         logging.info("Monster site opening")
         self.driver.get("https://www.monster.com//")
 
@@ -34,6 +35,12 @@ class Monster (JobPortal):
     def get_job_location_input_box(self):
         logging.info("getting monster job location box ")
         return self.get_element(self.LOCATION_INPUT_BOX_LOCATOR)
+
+    def set_job_location_and_search(self, job_location):
+        job_location_input_box = self.get_job_location_input_box()
+        job_location_input_box.send_keys(Keys.CONTROL, "a", Keys.DELETE)
+        logging.info("sending job location " + "\"" + job_location + "\"")
+        job_location_input_box.send_keys(job_location, Keys.RETURN)
 
     def get_job_title_input_box(self):
         logging.info("getting monster job title box")
@@ -48,7 +55,7 @@ class Monster (JobPortal):
                 time.sleep(1)
             except:
                 try:
-                    load_more_jobs = self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//button[@class='mux-btn fenced-btn']")))
+                    load_more_jobs = self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//button[@class='mux-btn fenced-btn']/span[text()='SHOW RELATED RESULTS']")))
                     load_more_jobs.click()
                     time.sleep(1)
                 except:

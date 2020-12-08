@@ -6,12 +6,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
-
 from POM.Job_Portal_Base import JobPortal
 
 
 class Dice(JobPortal):
-
 
     SEARCH_BUTTON_LOCATOR = (By.ID, "submitSearch-button")
     LOCATION_INPUT_BOX_LOCATOR = (By.ID, "google-location-search")
@@ -33,6 +31,13 @@ class Dice(JobPortal):
     def get_job_location_input_box(self):
         logging.info("getting dice job location box ")
         return self.get_element(self.LOCATION_INPUT_BOX_LOCATOR)
+
+    def set_job_location_and_search(self, job_location):
+        job_location_input_box = self.get_job_location_input_box()
+        job_location_input_box.send_keys(Keys.CONTROL, "a", Keys.BACK_SPACE)
+        logging.info("sending job location " + "\"" + job_location + "\"")
+        job_location_input_box.send_keys(job_location)
+        self.get_job_search_button().click()
 
     def get_job_title_input_box(self):
         logging.info("getting dice job title box")

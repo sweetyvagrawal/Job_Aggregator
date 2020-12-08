@@ -3,6 +3,7 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote import webelement
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -57,19 +58,19 @@ class Indeed(JobPortal):
         except Exception as e:
             logging.info(" no filters found as per job search", e)
 
+    def set_job_location_and_search(self, job_location):
+        job_location_input_box = self.get_job_location_input_box()
+        job_location_input_box.send_keys(Keys.CONTROL, "a", Keys.BACK_SPACE)
+        logging.info("sending job location " + "\"" + job_location + "\"")
+        job_location_input_box.send_keys(job_location, Keys.RETURN)
+
     def get_jobs_next_page(self):
         logging.info("getting next page button ")
         try:
-            next_page_links = self.driver.find_element(By.CSS_SELECTOR, "ul[class='pagination-list'] li")
-
-            for next_page_link in next_page_links:
-                try:
-                    next_page_link.find_element_by_xpath("a[aria-label='Next']")
-                    next_page_link.click()
-                    return self.get_job_list()
-                except Exception as e:
-                    logging.info("next button is disabled as next page is unavailable", e)
-                    return []
+            next_page_link = self.driver.find_element(By.CSS_SELECTOR, "ul[class='pagination-list'] li>a[aria-label='Next']")
+            next_page_link.click()
+            time.sleep(1)
+            return self.get_job_list()
         except Exception as e:
             logging.info("next page not found")
             return []
