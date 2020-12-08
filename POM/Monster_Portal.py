@@ -23,7 +23,7 @@ class Monster (JobPortal):
     def __init__(self, driver: webdriver):
         logging.info("creating monster class")
         self.driver = driver
-        self.wait = WebDriverWait(driver, 3)
+        self.wait = WebDriverWait(driver, 5)
         logging.info("Monster site opening")
         self.driver.get("https://www.monster.com//")
 

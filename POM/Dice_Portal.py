@@ -21,7 +21,7 @@ class Dice(JobPortal):
     def __init__(self, driver: webdriver):
         logging.info("creating dice class")
         self.driver = driver
-        self.wait = WebDriverWait(driver, 3)
+        self.wait = WebDriverWait(driver, 5)
         logging.info("dice site opening")
         self.driver.get("https://www.dice.com/")
         self.action_chain = ActionChains(driver)

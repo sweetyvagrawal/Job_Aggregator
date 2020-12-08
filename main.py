@@ -90,6 +90,7 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
                 job_location_input_box.send_keys(Keys.CONTROL, "a", Keys.DELETE)
                 logging.info("sending job location " + "\"" + job_location + "\"")
                 job_location_input_box.send_keys(job_location)
+                time.sleep(3)
                 job_portal.get_job_search_button().click()
                 job_portal.apply_job_filters()
                 time.sleep(1)

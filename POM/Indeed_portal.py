@@ -19,13 +19,12 @@ class Indeed(JobPortal):
     def __init__(self, driver: webdriver):
         logging.info("creating Indeed class")
         self.driver = driver
-        self.wait = WebDriverWait(driver, 3)
+        self.wait = WebDriverWait(driver, 10)
         logging.info("Indeed site opening")
         self.driver.get("https://www.indeed.com/")
 
     def get_job_search_button(self):
         logging.info("getting indeed search button")
-        time.sleep(2)
         return self.get_element(self.SEARCH_BUTTON_LOCATOR)
 
     def get_job_location_input_box(self):
