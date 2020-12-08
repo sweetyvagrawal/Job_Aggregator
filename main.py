@@ -85,7 +85,11 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
                 job_title_input_box = job_portal.get_job_title_input_box()
                 job_title_input_box.clear()
                 logging.info("sending job title " + "\"" +job_title + "\"")
-                job_title_input_box.send_keys(job_title)
+                while True:
+                    job_title_input_box.send_keys(job_title)
+                    time.sleep(1)
+                    if job_title_input_box.get_attribute("value") != "":
+                        break
                 job_portal.set_job_location_and_search(job_location)
                 job_portal.apply_job_filters()
                 time.sleep(1)
