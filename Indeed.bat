@@ -1,1 +1,1 @@
-python.exe main.py Indeed
+python.exe main.py Indeed >> indeed.log

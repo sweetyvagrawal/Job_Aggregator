@@ -1,1 +1,1 @@
-python.exe main.py Dice
+python.exe main.py Dice >> dice.log

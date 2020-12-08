@@ -92,7 +92,7 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
                 job_location_input_box.send_keys(job_location)
                 job_portal.get_job_search_button().click()
                 job_portal.apply_job_filters()
-                time.sleep(2)
+                time.sleep(1)
                 if not job_portal.is_job_found():
                     break
                 logging.info("getting all jobs link in variable")
@@ -127,7 +127,6 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
                 driver.get_screenshot_as_file(filename)
 
             finally:
-                time.sleep(1)
                 driver.quit()
 
             #break

@@ -1,1 +1,1 @@
-python.exe main.py Monster
+python.exe main.py Monster >> monster.log

@@ -19,12 +19,13 @@ class Indeed(JobPortal):
     def __init__(self, driver: webdriver):
         logging.info("creating Indeed class")
         self.driver = driver
-        self.wait = WebDriverWait(driver, 5)
+        self.wait = WebDriverWait(driver, 3)
         logging.info("Indeed site opening")
         self.driver.get("https://www.indeed.com/")
 
     def get_job_search_button(self):
         logging.info("getting indeed search button")
+        time.sleep(2)
         return self.get_element(self.SEARCH_BUTTON_LOCATOR)
 
     def get_job_location_input_box(self):
@@ -34,7 +35,7 @@ class Indeed(JobPortal):
     def is_job_found(self):
         try:
             logging.info("relevant jobs as per job search not found")
-            self.driver.find_element(By.XPATH, "//div[@class='no_results']")
+            self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//div[@class='no_results']")))
             return False
         except:
             logging.info("relevant jobs as per job search found")
@@ -52,8 +53,8 @@ class Indeed(JobPortal):
     def apply_job_filters(self) -> webelement:
         logging.info("applying filters")
         try:
-            self.driver.find_element(By.XPATH, "//button/span[contains(text(),'Date Posted')]").click()
-            self.driver.find_element(By.XPATH, "//a/span[contains(text(),'Last 24 hours')]").click()
+            self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//button/span[contains(text(),'Date Posted')]"))).click()
+            self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//a/span[contains(text(),'Last 24 hours')]"))).click()
         except Exception as e:
             logging.info(" no filters found as per job search", e)
 

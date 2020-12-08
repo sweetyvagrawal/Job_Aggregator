@@ -21,7 +21,7 @@ class Dice(JobPortal):
     def __init__(self, driver: webdriver):
         logging.info("creating dice class")
         self.driver = driver
-        self.wait = WebDriverWait(driver, 5)
+        self.wait = WebDriverWait(driver, 3)
         logging.info("dice site opening")
         self.driver.get("https://www.dice.com/")
         self.action_chain = ActionChains(driver)
@@ -54,23 +54,11 @@ class Dice(JobPortal):
     def open_job(self, job):
         try:
             logging.info("opening job in new tab")
-
-            for i in range(0, 3):
-                try:
-                    windows_handles = self.driver.window_handles
-                    job.send_keys(Keys.CONTROL, Keys.RETURN)
-                    self.wait.until(expected_conditions.new_window_is_opened(windows_handles))
-                    self.driver.switch_to_window(self.driver.window_handles[1])
-                    break
-                except:
-                    time.sleep(2)
-                    if i >= 2:
-                        raise
+            windows_handles = self.driver.window_handles
+            job.send_keys(Keys.CONTROL, Keys.RETURN)
+            self.wait.until(expected_conditions.new_window_is_opened(windows_handles))
+            self.driver.switch_to_window(self.driver.window_handles[1])
         except Exception as e:
-            # try:
-            #     time.sleep(2)
-            #     self.driver.switch_to_window(self.driver.window_handles[1])
-            # except:
             logging.exception("failed to switch to window")
             raise
 

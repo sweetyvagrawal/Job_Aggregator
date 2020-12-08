@@ -13,7 +13,7 @@ def get_driver() -> webdriver:
         #driver = webdriver.Chrome(executable_path="c:\\chromedriver.exe", options=options)
         driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
         driver.maximize_window()
-        driver.implicitly_wait(10)
+        #driver.implicitly_wait(2)
         logging.info("driver created successfully")
 
         return driver

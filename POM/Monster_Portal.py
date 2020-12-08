@@ -4,6 +4,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote import webelement
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -22,7 +23,7 @@ class Monster (JobPortal):
     def __init__(self, driver: webdriver):
         logging.info("creating monster class")
         self.driver = driver
-        self.wait = WebDriverWait(driver, 5)
+        self.wait = WebDriverWait(driver, 3)
         logging.info("Monster site opening")
         self.driver.get("https://www.monster.com//")
 
@@ -42,11 +43,17 @@ class Monster (JobPortal):
         logging.info("getting monster job list")
         while True:
             try:
-                load_more_jobs = self.driver.find_element(By.ID, "loadMoreJobs")
+                load_more_jobs = self.wait.until(expected_conditions.presence_of_element_located((By.ID, "loadMoreJobs")))
                 load_more_jobs.click()
                 time.sleep(1)
             except:
-                break
+                try:
+                    load_more_jobs = self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//button[@class='mux-btn fenced-btn']")))
+                    load_more_jobs.click()
+                    time.sleep(1)
+                except:
+                    break
+
         return self.get_elements(self.JOB_LIST_LOCATOR)
 
     def apply_job_filters(self) -> webelement:
@@ -88,7 +95,7 @@ class Monster (JobPortal):
     def is_job_found(self):
         try:
             logging.info("relevant jobs as per job search not found")
-            self.driver.find_element(By.CSS_SELECTOR, "h1[class='pivot block']")
+            self.wait.until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "h1[class='pivot block']")))
             return False
         except:
             logging.info("relevant jobs as per job search found")
