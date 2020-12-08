@@ -127,7 +127,7 @@ portal = sys.argv[1]
 # job_title = ""
 # job_location = ""
 if __name__ == '__main__':
-    pool = multiprocessing.Pool(processes=5)
+    pool = multiprocessing.Pool(processes=2)
     pool.map(single_process_job, job_titles)
 
 logging.info("job scrapping completed")
