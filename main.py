@@ -76,6 +76,7 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
     for job_title in job_titles:
         for job_location in job_locations:
             logging.info("trying to create Driver")
+            logging.info("starting scrapping jobs for job title:" + job_title + " and job location:" + job_location)
             driver = Utilities.get_driver()
 
             try:
@@ -94,6 +95,8 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
                 job_portal.apply_job_filters()
                 time.sleep(1)
                 if not job_portal.is_job_found():
+                    logging.warning(
+                        "no jobs found for job title:" + job_title + " and job location:" + job_location)
                     break
                 logging.info("getting all jobs link in variable")
 
@@ -102,6 +105,8 @@ with open('Jobs_Scrapped_new.csv', mode='w', encoding='utf-8') as jobs:
 
                 while True:
                     if len(job_list) == 0:
+                        logging.info(
+                            "no more jobs found for job title:" + job_title + " and job location:" + job_location)
                         break
 
                     for job in job_list:

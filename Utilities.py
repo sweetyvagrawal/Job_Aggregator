@@ -10,9 +10,10 @@ def get_driver() -> webdriver:
         options = webdriver.ChromeOptions()
         options.add_argument('--ignore-certificates-errors')
         options.add_argument("--test-type")
+
         #driver = webdriver.Chrome(executable_path="c:\\chromedriver.exe", options=options)
         driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
-        driver.maximize_window()
+        driver.minimize_window()
         #driver.implicitly_wait(2)
         logging.info("driver created successfully")
 
